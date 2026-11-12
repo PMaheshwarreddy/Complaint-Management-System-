@@ -7,19 +7,19 @@ import { backendDomain } from "../constants.js";
 const GoogleStrategy = Strategy;
 
 const getRollNo = (email) => {
-  const match = email.match(/\d{2}[a-zA-Z]{3}\d{1,4}$/);
+  const match = email.match(/\d{2}[a-zA-Z]{3}\d{1,4}/i);
 
   if (match) {
-    return "20" + match[0]; // found a roll number and return it
+    return match[0].toUpperCase();
   } else {
-    return "2022bcy0031"; // default roll number removed after testing
+    return email.split("@")[0];
   }
 };
 
 const getUserObjectFromProfile = (profile) => {
   return {
     googleId: profile.id,
-    displayName: profile.givenName,
+    displayName: profile.displayName || profile.name?.givenName || "User",
     email: profile.emails[0].value,
     userType: UserTypes.Complainant,
     rollNo: getRollNo(profile.emails[0].value),
@@ -27,6 +27,10 @@ const getUserObjectFromProfile = (profile) => {
 };
 
 export function GoogleAuth() {
+  if (!process.env.GOOGLE_CLIENT_ID || !process.env.GOOGLE_CLIENT_SECRET) {
+    console.warn("⚠️ Google OAuth credentials not set in backend/.env. Passport GoogleStrategy skipped.");
+    return;
+  }
   // Configure Passport to use the Google OAuth 2.0 strategy
   passport.use(
     new GoogleStrategy(
@@ -45,29 +49,24 @@ export function GoogleAuth() {
               : null;
           if (!userEmail) throw new Error("No email found");
 
-          // todo: check weather the user with this email is allowed or not
-
           let user = await User.findOne({ email: userEmail });
-          // console.log("*******profile is :", profile);
-          // console.log("*******profile is :", accessToken);
           // If the user doesn't exist, create a new user
           if (!user) {
-            if (!userEmail.endsWith("@iiitkottayam.ac.in"))
-              throw new Error("Only IIITKottayam emails are allowed");
+            const allowedDomain = process.env.ALLOWED_EMAIL_DOMAIN;
+            if (allowedDomain && !userEmail.endsWith(`@${allowedDomain}`)) {
+              throw new Error(`Only @${allowedDomain} emails are allowed`);
+            }
             await User.create(
-              getUserObjectFromProfile(profile, UserTypes.Complainant),
+              getUserObjectFromProfile(profile),
             );
           } else if (!user.googleId || user.flag) {
             user.googleId = profile.id;
-            user.displayName = profile.name.givenName;
+            user.displayName = profile.displayName || profile.name?.givenName || user.displayName;
             await user.save();
           }
-          // console.log('prodile : ', profile);
           // Pass the profile information to the next middleware
           return cb(null, profile);
         } catch (error) {
-          // If an error occurs, throw the error
-          // throw new Error(error);
           cb(error, null);
         }
       }),

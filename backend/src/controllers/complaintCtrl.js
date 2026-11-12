@@ -145,13 +145,20 @@ export const getComplaintWithId = AsyncHandler(async (req, res, next) => {
   const resComplaint = complaint.toObject();
 
   const createdBy = await User.findOne({ googleId: resComplaint.createdBy });
-
   removeConfidentialProperties(createdBy);
+
+  const acceptedById = resComplaint.acceptedBy;
   delete resComplaint.createdBy;
   delete resComplaint.acceptedBy;
 
-  const acceptedBy = resComplaint.acceptedBy ? await User.findOne({ googleId: resComplaint.acceptedBy }) : null;
-  removeConfidentialProperties(acceptedBy);
+  let acceptedBy = null;
+  if (acceptedById) {
+    acceptedBy = await User.findById(acceptedById);
+    if (!acceptedBy) {
+      acceptedBy = await User.findOne({ googleId: acceptedById });
+    }
+    removeConfidentialProperties(acceptedBy);
+  }
 
   return acceptedBy ? res.status(200).json({
     complaint: resComplaint,

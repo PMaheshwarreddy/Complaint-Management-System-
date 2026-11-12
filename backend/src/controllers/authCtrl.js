@@ -6,6 +6,34 @@ import { GetComplaintId } from "../utils/getCompliantId.js";
 
 // User authentication
 export const Userauth = (req, res, next) => {
+  if (!process.env.GOOGLE_CLIENT_ID || !process.env.GOOGLE_CLIENT_SECRET) {
+    return res.status(503).send(`
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <title>Google OAuth Not Configured</title>
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <style>
+            body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #f1f5f9; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; padding: 1rem; }
+            .card { background: white; padding: 2.5rem; border-radius: 16px; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1); max-width: 480px; text-align: center; }
+            h2 { color: #dc2626; margin-top: 0; }
+            p { color: #475569; line-height: 1.6; }
+            code { background: #f1f5f9; padding: 0.2rem 0.4rem; border-radius: 4px; font-weight: 600; color: #0f172a; }
+            .btn { display: inline-block; margin-top: 1.5rem; padding: 0.75rem 1.5rem; background: #2563eb; color: white; border-radius: 8px; text-decoration: none; font-weight: 600; transition: background 0.2s; }
+            .btn:hover { background: #1d4ed8; }
+          </style>
+        </head>
+        <body>
+          <div class="card">
+            <h2>⚙️ Google OAuth Not Configured</h2>
+            <p>To enable live Google Sign-In, please provide your <code>GOOGLE_CLIENT_ID</code> and <code>GOOGLE_CLIENT_SECRET</code> in <code>backend/.env</code>.</p>
+            <p>You can also use the instant <strong>Offline Demo Roles</strong> directly on the login page to preview all dashboards.</p>
+            <a href="${frontendUrls.home}" class="btn">← Back to Application</a>
+          </div>
+        </body>
+      </html>
+    `);
+  }
   try {
     passport.authenticate("google", {
       scope: ["email", "profile"],
@@ -43,10 +71,12 @@ export const UserLogout = (req, res) => {
 const toogleBlock = async (id, res, value) => {
   const result = await User.updateOne({ googleId: id }, { IsBlock: value });
 
-  if (result.modifiedCount) throw new Error("Cannot able to unblock user");
+  if (result.matchedCount === 0) {
+    throw new Error("User not found");
+  }
   return res.status(200).json({
     status: "success",
-    message: "User unblocked successfully",
+    message: value ? "User blocked successfully" : "User unblocked successfully",
   });
 };
 
@@ -114,16 +144,13 @@ const formatUser = (user, googleUser) => {
 };
 
 export const pingUser = AsyncHandler(async (req, res) => {
-  console.log('====================================');
-  console.log(req.session())
-  console.log('====================================');
-  console.log(req.cookies())
-
   if (req.user) {
     const user = await User.findOne({ googleId: req.user.id });
+    if (!user) {
+      return res.status(404).json({ message: "User not found in database" });
+    }
     res.json(formatUser(user, req.user));
   } else {
-    console.log("user Not found");
     res.status(401).json({ message: "User not found" });
   }
 });

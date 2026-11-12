@@ -144,34 +144,35 @@ const Technician = () => {
         onError,
     })
     if(technicianPendingComplaintQuery.isLoading) return <Loading />
-    if(technicianPendingComplaintQuery.isError) return technicianPendingComplaintQuery.error.message
 
-    // console.log(technicianPendingComplaintQuery.data?.pages);
     const pendingComplaints = technicianPendingComplaintQuery.data?.pages.flatMap(page => page.complaints) || [];
     const acceptedComplaints = technitianAcceptedComplaintQuery.data?.pages.flatMap(page => page.complaints) || [];
-    // const complaintsMap = {
-    //     "": ,
-    //     "accepted": acceptedComplaints,
-    //     "verified": pendingComplaints
-    // };
     const allComplaints = pendingComplaints.concat(acceptedComplaints).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
     return (
         <div className={styles.solved_complaints_wrapper}>
-            <div className={`p-5 text-2xl font-semibold bg-gray-300 ${styles.complaints}`}>Complaints</div>
-            {technicianPendingComplaintQuery.isSuccess && <TempTable   header={complaintHeader}
-                                                                       data={allComplaints}
-                                                                       Component={TechnicianComplaint}
-                                                                       searchParam='complaintId'
-                                                                       altsearchParam='title'
-                                                                       parser={Number}
-                                                                       filterParam='status'
-                                                                       options={selectOptions}
-                                                                       queries={[technicianPendingComplaintQuery, technitianAcceptedComplaintQuery]}
-                                                                       props={{
-                                                                           acceptMutation,
-                                                                            solvedMutation,
-                                                                       }}
-                                                            />}
+            <div className={`p-5 text-2xl font-semibold bg-gray-300 ${styles.complaints}`}>Technician Work Orders</div>
+            {allComplaints.length > 0 ? (
+                <TempTable
+                    header={complaintHeader}
+                    data={allComplaints}
+                    Component={TechnicianComplaint}
+                    searchParam='complaintId'
+                    altsearchParam='title'
+                    parser={Number}
+                    filterParam='status'
+                    options={selectOptions}
+                    queries={[technicianPendingComplaintQuery, technitianAcceptedComplaintQuery]}
+                    props={{
+                        acceptMutation,
+                        solvedMutation,
+                    }}
+                />
+            ) : (
+                <div className="p-10 text-center text-gray-500 flex flex-col items-center gap-2">
+                    <p className="text-lg font-medium">No assigned complaints in your domain right now.</p>
+                    <p className="text-sm">Verified complaints matching your specialty will show up here.</p>
+                </div>
+            )}
         </div>
     );
 };

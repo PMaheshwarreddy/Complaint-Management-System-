@@ -7,7 +7,7 @@ import {useUser} from "@/contexts/UserContextProvider.jsx";
 
 const IndexLayout = () => {
     const {user} = useUser();
-    const links = user ? auLinks[user.role] : [];
+    const links = user && user.role !== undefined && auLinks[user.role] ? auLinks[user.role] : unAuLinks;
     return (
         <>
             <Navbar auLinks={links} unAuLinks={unAuLinks} subs={subs}/>

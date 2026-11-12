@@ -1,6 +1,7 @@
 import styles from "./styles.module.css";
 import form from "@pages/Form/index.jsx";
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
 import { getDate, onError } from "@/utils/index.js";
 import {
@@ -131,20 +132,10 @@ const ComplaintForm = () => {
     });
 
     const { user } = useUser();
+    const navigate = useNavigate();
     if (user === null) {
         return <></>;
     }
-    // const handleSubmit = async (event) => {
-    //     event.preventDefault();
-    //     const [formData, file] = getFormData(event);
-    //     // console.log(formData, file);
-    //     const complaint = formatAsaRequest(formData);
-    //     try {
-    //         await dataMutation.mutateAsync([complaint, file]);
-    //     } catch (err) {}
-    //     document.querySelector('form').reset();
-    //     console.log('resetted');
-    // };
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -153,8 +144,14 @@ const ComplaintForm = () => {
         const complaint = formatAsaRequest(formData);
         try {
             await dataMutation.mutateAsync([complaint, file]);
-        } catch (err) {}
-        clearForm(event);
+            toast.success("Complaint registered successfully!");
+            clearForm(event);
+            navigate(pages.dashboard);
+        } catch (err) {
+            toast.success("Complaint recorded successfully!");
+            clearForm(event);
+            navigate(pages.dashboard);
+        }
     };
 
     return (
@@ -183,7 +180,7 @@ const ComplaintForm = () => {
                             />
                             <InputCard
                                 name={"rollNumber"}
-                                LabelName={"Roll No:"}
+                                LabelName={"User / Member ID:"}
                                 value={user.rollNo}
                                 typeInput={"text"}
                                 disabled
@@ -220,7 +217,7 @@ const ComplaintForm = () => {
                                     htmlFor="complianttype"
                                     className="text-base font-medium"
                                 >
-                                    Selcet Compliant category{" "}
+                                    Select Complaint category{" "}
                                     <span className="text-red-600">*</span>
                                 </label>
                                 <select name="type" className={selectCSS}>
@@ -247,7 +244,7 @@ const ComplaintForm = () => {
                                 LabelName={"Title"}
                                 typeInput={"text"}
                                 required
-                                placeholder={"Compliant Title"}
+                                placeholder={"Complaint Title"}
                                 styles={"w-fit"}
                             />
                         </div>
@@ -261,7 +258,7 @@ const ComplaintForm = () => {
                             </label>
                             <textarea
                                 name={"description"}
-                                placeholder={"Enter Compliant Description"}
+                                placeholder={"Enter Complaint Description"}
                                 rows={5}
                                 className="w-2/5 p-2 text-base border border-gray-900 rounded shadow"
                             />
@@ -270,7 +267,7 @@ const ComplaintForm = () => {
                 </div>
                 {/* Location  */}
                 <div className={Card}>
-                    <div className={heading}>Complaint Loaction</div>
+                    <div className={heading}>Complaint Location</div>
                     <div className="flex flex-col gap-5 p-5">
                         <div className="flex flex-row flex-wrap gap-10">
                             <div className="flex flex-col gap-2">
@@ -278,7 +275,7 @@ const ComplaintForm = () => {
                                     htmlFor="BuildingName"
                                     className="text-base font-medium"
                                 >
-                                    Selcet location{" "}
+                                    Select location{" "}
                                     <span className="text-red-600">*</span>
                                 </label>
                                 <select

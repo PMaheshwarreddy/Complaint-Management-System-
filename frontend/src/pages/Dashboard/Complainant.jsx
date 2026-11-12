@@ -43,27 +43,32 @@ const Complainant = () => {
         onError,
     });
     if(allComplaintsQuery.isLoading) return <Loading />
-    if(allComplaintsQuery.isError) return allComplaintsQuery.error.message
 
     const allComplaints = allComplaintsQuery.data?.pages.flatMap(page => page.complaints) || []
-    // console.log(allComplaints);
     allComplaints.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
     return (
         <div className={styles.solved_complaints_wrapper}>
             <div className="p-5 text-2xl font-semibold bg-gray-300">Complaints</div>
-            {allComplaintsQuery.isSuccess && <TestTable header={complaintHeader}
-                                                        data={allComplaints}
-                                                        Component={UserComplaint}
-                                                        searchParam='complaintId'
-                                                        altsearchParam='title'
-                                                        filterParam='status'
-                                                        parser={Number}
-                                                        options={selectOptions}
-                                                        queries={[allComplaintsQuery]}
-                                                        props={{
-                                                            deleteMutation,
-                                                        }}
-                                            />}
+            {allComplaints.length > 0 ? (
+                <TestTable header={complaintHeader}
+                           data={allComplaints}
+                           Component={UserComplaint}
+                           searchParam='complaintId'
+                           altsearchParam='title'
+                           filterParam='status'
+                           parser={Number}
+                           options={selectOptions}
+                           queries={[allComplaintsQuery]}
+                           props={{
+                               deleteMutation,
+                           }}
+                />
+            ) : (
+                <div className="p-10 text-center text-gray-500 flex flex-col items-center gap-2">
+                    <p className="text-lg font-medium">No complaints registered yet.</p>
+                    <p className="text-sm">Use the "Register Complaint" button above to submit your first issue.</p>
+                </div>
+            )}
         </div>
     );
 }

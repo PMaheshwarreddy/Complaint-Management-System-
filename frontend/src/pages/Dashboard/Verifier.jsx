@@ -52,25 +52,32 @@ const Verifier = () => {
     const {data, isLoading, isError, isFetching, hasNextPage, error, isSuccess} = verifierComplaintQuery;
 
     if(isLoading) return <Loading />
-    if(isError) return error.message
 
     const complaints = data?.pages.flatMap(page => page.complaints) || [];
 
     return (
         <div className={styles.solved_complaints_wrapper}>
-            <div className={`p-5 text-2xl font-semibold bg-gray-300 ${styles.complaints}`}>Complaints</div>
+            <div className={`p-5 text-2xl font-semibold bg-gray-300 ${styles.complaints}`}>Pending Verification Queue</div>
 
-            {isSuccess && <TempTable
-                            data={complaints}
-                            header={complaintHeader}
-                            Component={VerifierComplaint}
-                            searchParam={'complaintId'}
-                            altsearchParam={'title'}
-                            queries={[verifierComplaintQuery]}
-                            props={{
-                                rejectMutation,
-                                verifyMutation
-                            }} /> }
+            {complaints.length > 0 ? (
+                <TempTable
+                    data={complaints}
+                    header={complaintHeader}
+                    Component={VerifierComplaint}
+                    searchParam={'complaintId'}
+                    altsearchParam={'title'}
+                    queries={[verifierComplaintQuery]}
+                    props={{
+                        rejectMutation,
+                        verifyMutation
+                    }}
+                />
+            ) : (
+                <div className="p-10 text-center text-gray-500 flex flex-col items-center gap-2">
+                    <p className="text-lg font-medium">No pending complaints awaiting verification.</p>
+                    <p className="text-sm">New submitted complaints will appear here for review.</p>
+                </div>
+            )}
         </div>
     );
 };

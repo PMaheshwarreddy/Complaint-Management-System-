@@ -1,36 +1,87 @@
-# Complaint Management System - Frontend
+# 💻 Complaint Management System — Frontend Client
 
-Welcome to the Complaint Management System (CMS) frontend repository. This system provides a user-friendly interface for managing and tracking complaints submitted by users. The frontend is built using modern web technologies to ensure a responsive and intuitive user experience.
+[![React](https://img.shields.io/badge/React-v18.2+-61DAFB?logo=react&logoColor=black)](https://react.dev/)
+[![Vite](https://img.shields.io/badge/Vite-v5.1+-646CFF?logo=vite&logoColor=white)](https://vitejs.dev/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-v3.4+-38B2AC?logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
+[![TanStack Query](https://img.shields.io/badge/TanStack_Query-v5+-FF4154?logo=react-query&logoColor=white)](https://tanstack.com/query)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-## Features
+Modern, reactive single-page frontend application for the open-source **Complaint Management System**, built with React 18, Vite, React Router v6, Tailwind CSS, TanStack React Query, and Sonner toasts.
 
-- **User Authentication:** Secure login and registration system for users and administrators.
-- **Complaint Submission:** Users can easily submit complaints with relevant details and attachments.
-- **Dashboard:** Interactive dashboard for administrators to view and manage complaints.
-- **Real-time Updates:** Receive notifications and updates on complaint status changes.
-- **Reporting:** Generate and export reports for analysis and auditing purposes.
+---
 
-## Technologies Used
+## 🌟 Key Features
 
-- **React:** Frontend framework for building user interfaces.
-- **Redux:** State management library for managing application state.
-- **Axios:** HTTP client for making API requests.
-- **Venilla css:** currently no css frameworks are used planning to include tailwind css after stable release.
-- **Chart.js:** Charting library for visualizing data in reports.
+- **Dynamic Role-Based Dashboards**: Automatically renders customized dashboards for Complainants, Verifiers, Technicians, and Administrators.
+- **Infinite Pagination & Debounced Search**: Seamless scrolling table views with live keyword search and status filters.
+- **Structured Complaint Filing Form**: Autofills verified user identity, captures issue category, building/location, description, and accepts media attachments (images/videos).
+- **Proof Viewer**: Inline preview of uploaded image or video evidence.
+- **Real-Time Notification Toasts**: Interactive status feedback powered by Sonner.
+- **Admin Statistics Panel**: Visual breakdown of open, verified, accepted, solved, and rejected issues.
 
-## Getting Started
+---
 
-To run the CMS frontend locally, follow these steps:
+## 📋 Prerequisites
 
-1. Clone the repository: `git clone https://github.com/CometComplain/frontend`
-2. Install dependencies: `npm install`
-3. Build the Project: `npm run buid`
-4. The static build files will be generated in the `dist` directory.
-5. serve the static files using any server like `serve` or `http-server` or `nodejs` etc.
-## Configuration
+- **Node.js** (v18.0.0 or higher)
+- **Backend API Server** running and accessible
 
-Before running the frontend, make sure to configure the API [backend of this project](https://github.com/CometComplain/backend) endpoint in the `.env` file:
+---
 
-## SRS and other Documents 
+## 🚀 Quick Start
 
-If you want to review our project, please go to the "Project Information" folder located in the frontend repository.
+### 1. Install Dependencies
+```bash
+cd frontend
+npm install
+```
+
+### 2. Configure Environment Variables
+Copy `.env.example` to `.env`:
+```bash
+cp .env.example .env
+```
+Set your backend API endpoint:
+```env
+VITE_BACKEND_URL=http://localhost:5000
+```
+
+### 3. Run Development Server
+```bash
+npm run dev
+```
+The app will be available at `http://localhost:5173`.
+
+### 4. Build for Production
+```bash
+npm run build
+npm run preview
+```
+
+---
+
+## 📂 Project Structure
+
+```
+src/
+├── api/             # Axios API client functions
+├── assets/          # SVG icons & branding graphics
+├── components/      # UI components (Navbar, Footer, Tables, Cards, Modals)
+├── contexts/        # UserContextProvider (session & auth state)
+├── Layouts/         # IndexLayout & UserLayout route shells
+├── pages/
+│   ├── Admin/       # Admin dashboards, metrics, and staff management
+│   ├── Complaint/   # Detailed complaint view with action buttons
+│   ├── Dashboard/   # Role-specific dashboard views (User, Verifier, Tech)
+│   ├── Form/        # Grievance registration form
+│   ├── Home/        # Hero landing page & feature highlights
+│   └── Login/       # Google sign-in portal
+├── constants.js     # Role definitions, routes, building maps & styles
+└── utils/           # Helper utilities
+```
+
+---
+
+## 📄 License
+
+This project is licensed under the [MIT License](LICENSE).

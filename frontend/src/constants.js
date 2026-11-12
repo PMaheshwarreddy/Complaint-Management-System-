@@ -52,26 +52,26 @@ export const reverseComplaintTypes = {
 };
 
 export const buildingsMap = {
-    Mess: 0,
-    "Admin Block": 1,
-    "Academic Block": 2,
-    "new Academic Block": 3,
-    "Meenachil Hostel": 4,
-    "Sahayadri Hostel": 5,
-    "Manimala Hostel": 6,
-    "Annaimudi Hostel": 7,
-    "Anna residency": 8,
+    "Administrative Block": 0,
+    "Main Building": 1,
+    "Block A": 2,
+    "Block B": 3,
+    "Block C": 4,
+    "Residential / Hostel Block 1": 5,
+    "Residential / Hostel Block 2": 6,
+    "Cafeteria / Dining Hall": 7,
+    "Utility & Operations": 8,
 };
 export const reverseBuildingsMap = {
-    [0]: "Mess",
-    [1]: "Admin Block",
-    [2]: "Academic Block",
-    [3]: "new Academic Block",
-    [4]: "Meenachil Hostel",
-    [5]: "Sahayadri Hostel",
-    [6]: "Manimala Hostel",
-    [7]: "Annaimudi Hostel",
-    [8]: "Anna residency",
+    [0]: "Administrative Block",
+    [1]: "Main Building",
+    [2]: "Block A",
+    [3]: "Block B",
+    [4]: "Block C",
+    [5]: "Residential / Hostel Block 1",
+    [6]: "Residential / Hostel Block 2",
+    [7]: "Cafeteria / Dining Hall",
+    [8]: "Utility & Operations",
 };
 
 export const pages = {
@@ -93,7 +93,7 @@ export const pages = {
     complaint: "/user/complaint",
 };
 
-export const backendUrl = import.meta.env.VITE_BACKEND_URL;
+export const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:5001";
 
 // export const apiRoutes = {
 //     registerComplaint: "/api/grievance/register",
@@ -157,6 +157,14 @@ export const unAuLinks = [
     {
         name: "Home",
         path: "/",
+    },
+    {
+        name: "Features",
+        path: "/#about",
+    },
+    {
+        name: "Contact",
+        path: "/#contact",
     },
 ];
 

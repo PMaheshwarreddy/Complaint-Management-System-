@@ -2,8 +2,9 @@ import mongoose from "mongoose";
 
 export const connectDb = async () => {
     try {
-        const mongoConnection = await mongoose.connect(process.env.MONGO_URL,{
-            dbName:"CommetComplain"
+        const dbName = process.env.DB_NAME || "ComplaintManagement";
+        const mongoConnection = await mongoose.connect(process.env.MONGO_URL, {
+            dbName,
         });
         console.log("-------> MongoDB connected <-------");
         console.log('Hosted at ', mongoConnection.connection.host);

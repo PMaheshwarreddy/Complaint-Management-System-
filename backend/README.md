@@ -1,49 +1,112 @@
-# CometComplain
-### Backend for CometComplain, a complaint management system for organisations.
+# 🛠️ Complaint Management System — Backend API
 
+[![Node.js](https://img.shields.io/badge/Node.js-v18+-339933?logo=node.js&logoColor=white)](https://nodejs.org/)
+[![Express.js](https://img.shields.io/badge/Express.js-v4.18+-000000?logo=express&logoColor=white)](https://expressjs.com/)
+[![MongoDB](https://img.shields.io/badge/MongoDB-v6.0+-47A248?logo=mongodb&logoColor=white)](https://www.mongodb.com/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-CometComplain is an application designed for use within a university environment, allowing students and professors to register complaints that are then addressed and resolved.
+Backend REST API for the open-source **Complaint Management System**, built with Express.js, MongoDB/Mongoose, Passport Google OAuth 2.0, Cloudinary media storage, and cryptographic deduplication.
 
-## Installation
+---
 
-To install CometComplain, follow these steps:
+## 🌟 Key Features
 
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/your-username/CometComplain.git
-   ```
+- **Google OAuth 2.0 Authentication**: Seamless authentication using Passport.js with MongoDB session persistence.
+- **Custom Domain Flexibility**: Open by default to any valid Google email account, with optional domain restriction (`ALLOWED_EMAIL_DOMAIN`).
+- **Role-Based Access Control (RBAC)**:
+  - `Complainant (0)`: Register, view, and retract complaints.
+  - `Verifier (1)`: Review, verify, or reject pending complaints.
+  - `Technician (2)`: Domain-filtered assignment (Electrical, Plumbing, IT, Mess, Others), acceptance, and resolution.
+  - `Admin (3)`: System oversight, staff provisioning, account blocking/unblocking, and aggregate analytics.
+- **Cryptographic Anti-Spam / Deduplication**: Calculates SHA-256 hashes of incoming complaints to prevent duplicate submissions.
+- **Direct Cloud Media Uploads**: Secure image and video proof storage via Cloudinary with automatic local temp file cleanup.
+- **Real-Time Analytics & Aggregations**: Aggregation pipelines for daily, weekly, monthly, and status-based breakdown metrics.
 
-2. Navigate to the project directory:
-   ```bash
-   cd CometComplain
-   ```
+---
 
-3. Install dependencies:
-   ```bash
-   npm install
-   ```
+## 📋 Prerequisites
 
-## Usage
+- **Node.js** (v18.0.0 or higher)
+- **MongoDB** (Local instance or [MongoDB Atlas](https://www.mongodb.com/cloud/atlas))
+- **Google Cloud Console Project** with OAuth 2.0 Client ID & Secret
+- **Cloudinary Account** for proof media attachments
 
-To run CometComplain, use the following command:
+---
+
+## 🚀 Quick Start
+
+### 1. Install Dependencies
 ```bash
+cd backend
+npm install
+```
+
+### 2. Configure Environment Variables
+Copy `.env.example` to `.env`:
+```bash
+cp .env.example .env
+```
+Fill in your configuration:
+```env
+PORT=5000
+NODE_ENV=development
+BACKEND_DOMAIN=http://localhost:5000
+FRONTEND_DOMAIN=http://localhost:5173
+
+MONGO_URL=mongodb://localhost:27017
+DB_NAME=ComplaintManagement
+SESSION_SECRET_KEY=your_secure_session_secret
+
+GOOGLE_CLIENT_ID=your_google_client_id
+GOOGLE_CLIENT_SECRET=your_google_client_secret
+ALLOWED_EMAIL_DOMAIN=
+
+CLOUDINARY_CLOUD_NAME=your_cloudinary_name
+CLOUDINARY_API_KEY=your_cloudinary_key
+CLOUDINARY_API_SECRET=your_cloudinary_secret
+CLOUDINARY_URL=cloudinary://your_key:your_secret@your_cloud_name
+```
+
+### 3. Start the Server
+```bash
+# Development (with auto-reload)
+npm run dev
+
+# Production
 npm start
 ```
-This will start the Express application, and you can access it through your web browser at `http://localhost:3000`.
 
-## Contributing
+---
 
-Contributions to CometComplain are welcome! If you'd like to contribute, please follow these steps:
+## 📡 REST API Reference
 
-1. Fork the repository.
-2. Create a new branch (`git checkout -b feature/new-feature`).
-3. Make your changes.
-4. Commit your changes (`git commit -am 'Add new feature'`).
-5. Push to the branch (`git push origin feature/new-feature`).
-6. Create a new Pull Request.
+### 🔐 Authentication (`/grievance/auth`)
+| Method | Endpoint | Access | Description |
+|---|---|---|---|
+| `GET` | `/google` | Public | Initiates Google OAuth 2.0 sign-in |
+| `GET` | `/google/callback` | Public | OAuth callback URL |
+| `GET` | `/logout` | Authenticated | Destroys session and logs user out |
+| `GET` | `/pingUser` | Authenticated | Returns logged-in user profile & role |
+| `POST` | `/createUser` | Admin | Adds a new Verifier or Technician account |
+| `PUT` | `/blockUser/:id` | Admin | Blocks a user account |
+| `PUT` | `/unblockUser/:id` | Admin | Unblocks a user account |
+| `GET` | `/users/:suburl` | Admin | Lists users with pagination |
 
-## License
+### 📝 Complaints (`/grievance`)
+| Method | Endpoint | Access | Description |
+|---|---|---|---|
+| `POST` | `/register` | Complainant | Registers a new complaint with media upload |
+| `GET` | `/complaints/:suburl` | Authenticated | Paginated complaints filtered by role/status |
+| `GET` | `/complaint/:complaintId`| Authenticated | Retrieves detailed complaint with actor info |
+| `POST` | `/verify` | Verifier | Approves/verifies a pending complaint |
+| `PUT` | `/reject` | Verifier | Rejects an invalid complaint |
+| `POST` | `/accept` | Technician | Claims a verified complaint in technician's domain |
+| `POST` | `/solve` | Technician | Marks an accepted complaint as solved |
+| `DELETE`| `/delete` | Complainant | Withdraws/deletes an unsolved complaint |
+| `GET` | `/complaintcount` | Admin | Fetches counts grouped by complaint status |
 
-CometComplain is licensed under the [MIT License](LICENSE).
+---
 
-For frontend code, visit [CometComplain-Frontend](https://github.com/CometComplain/frontend)
+## 📄 License
+
+This project is licensed under the [MIT License](LICENSE).

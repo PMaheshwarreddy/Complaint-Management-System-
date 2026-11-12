@@ -52,7 +52,7 @@ export const complaintHeader = (
 );
 
 const smallMap = {
-    [UserTypes.Complainant] : 'Roll No',
+    [UserTypes.Complainant] : 'Member ID',
     [UserTypes.Verifier] : 'Role',
     [UserTypes.Technician] : 'Domain',
 }

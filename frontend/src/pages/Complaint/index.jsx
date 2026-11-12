@@ -47,7 +47,7 @@ const Verifier = ({complaint}) => {
         }, onError,
     });
     const handleReject = async () => {
-        await verifyMutation.mutateAsync(complaint.complaintId);
+        await rejectMutation.mutateAsync(complaint.complaintId);
     }
     return (<div className={`${styles.bottom_buttons_wrapper}`}>
             {complaint.status < statusMap.Verified &&
@@ -142,7 +142,7 @@ const Complaint = () => {
             }}>
                 <div className='w-full'>
                     <div className="flex flex-col gap-3 m-5 border border-gray-300 rounded-lg shadow-lg ">
-                        <div className="p-5 text-2xl font-semibold bg-gray-300 ">Veiw Application Details</div>
+                        <div className="p-5 text-2xl font-semibold bg-gray-300 ">View Application Details</div>
                         <div className="flex flex-row flex-wrap justify-between p-5 gap-5">
                             <div className={col}>
                                 <div className={row}>
@@ -208,7 +208,7 @@ const Complaint = () => {
                             <div className={col}>
                                 <div className={row}>
                                     <div className={firstRow}>
-                                        Roll No
+                                        User / Member ID
                                     </div>
                                     <div className={secondRow}>
                                         {createdBy.rollNo}

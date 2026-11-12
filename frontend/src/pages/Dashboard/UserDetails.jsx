@@ -6,7 +6,7 @@ const UserDetails = () => {
   const HeadDivStyle = "flex flex-wrap item-center gap-1";
   const headstyle = "text-xl font-semibold text-gray-700";
   const contentstyle = "text-lg";
-  const img = user.image;
+  const img = user.image || `https://api.dicebear.com/7.x/identicon/svg?seed=${encodeURIComponent(user.email || 'user')}`;
 
   return (
     <div
@@ -40,7 +40,7 @@ const UserDetails = () => {
             </div>
             {user.role === UserTypes.Complainant && (
               <div className={HeadDivStyle}>
-                <div className={headstyle}>Roll No:</div>
+                <div className={headstyle}>Member ID:</div>
                 <div className={contentstyle}>
                   {user.rollNo}
                 </div>
